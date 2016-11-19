@@ -31,6 +31,13 @@ namespace AtmelISPFrontEnd
         {
             String lineFromFile;
 
+            //check file Exists
+            if (System.IO.File.Exists(fileLocation) == false)
+            {
+                this.fileHasError = true;
+                return;
+            }
+
             //Open File Location
             System.IO.StreamReader fStream = new System.IO.StreamReader(fileLocation);
 

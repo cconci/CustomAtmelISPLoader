@@ -160,16 +160,16 @@ namespace AtmelISPFrontEnd
 
             recordFormatted = "";
             recordFormatted += this.startCode + "|";
-            recordFormatted += this.byteCount + "|";
-            recordFormatted += this.address + "|";
-            recordFormatted += this.recordType + "|";
+            recordFormatted += this.byteCount.ToString("X2") + "|";
+            recordFormatted += this.address.ToString("X4") + "|";
+            recordFormatted += this.recordType.ToString("X2") + "|";
 
             for (int i = 0; i < this.data.Count; i++)
             {
-                recordFormatted += this.data[i] + " ";
+                recordFormatted += this.data[i].ToString("X2") + " ";
             }
             recordFormatted += "|";
-            recordFormatted += this.checkSum + "|";
+            recordFormatted += this.checkSum.ToString("X2") + "|";
             recordFormatted += "\n";
 
             return recordFormatted;
