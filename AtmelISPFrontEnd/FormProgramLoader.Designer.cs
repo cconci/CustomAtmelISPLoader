@@ -46,6 +46,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.comboBoxComPorts = new System.Windows.Forms.ComboBox();
             this.labelRefreshCOMports = new System.Windows.Forms.Label();
+            this.checkBoxShowComms = new System.Windows.Forms.CheckBox();
+            this.labelCopyToClipboard = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -212,11 +214,37 @@
             this.labelRefreshCOMports.Text = "Refresh";
             this.labelRefreshCOMports.Click += new System.EventHandler(this.labelRefreshCOMports_Click);
             // 
+            // checkBoxShowComms
+            // 
+            this.checkBoxShowComms.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxShowComms.AutoSize = true;
+            this.checkBoxShowComms.Location = new System.Drawing.Point(29, 419);
+            this.checkBoxShowComms.Name = "checkBoxShowComms";
+            this.checkBoxShowComms.Size = new System.Drawing.Size(90, 17);
+            this.checkBoxShowComms.TabIndex = 13;
+            this.checkBoxShowComms.Text = "Show Comms";
+            this.checkBoxShowComms.UseVisualStyleBackColor = true;
+            // 
+            // labelCopyToClipboard
+            // 
+            this.labelCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelCopyToClipboard.AutoSize = true;
+            this.labelCopyToClipboard.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelCopyToClipboard.ForeColor = System.Drawing.Color.Blue;
+            this.labelCopyToClipboard.Location = new System.Drawing.Point(466, 207);
+            this.labelCopyToClipboard.Name = "labelCopyToClipboard";
+            this.labelCopyToClipboard.Size = new System.Drawing.Size(90, 13);
+            this.labelCopyToClipboard.TabIndex = 14;
+            this.labelCopyToClipboard.Text = "Copy to Clipboard";
+            this.labelCopyToClipboard.Click += new System.EventHandler(this.labelCopyToClipboard_Click);
+            // 
             // FormProgramLoader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 461);
+            this.Controls.Add(this.labelCopyToClipboard);
+            this.Controls.Add(this.checkBoxShowComms);
             this.Controls.Add(this.labelRefreshCOMports);
             this.Controls.Add(this.comboBoxComPorts);
             this.Controls.Add(this.label3);
@@ -232,6 +260,7 @@
             this.MinimumSize = new System.Drawing.Size(600, 500);
             this.Name = "FormProgramLoader";
             this.Text = "Atmel ISP Front End";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormProgramLoader_FormClosing);
             this.Load += new System.EventHandler(this.FormProgramLoader_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -259,6 +288,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox comboBoxComPorts;
         private System.Windows.Forms.Label labelRefreshCOMports;
+        private System.Windows.Forms.CheckBox checkBoxShowComms;
+        private System.Windows.Forms.Label labelCopyToClipboard;
     }
 }
 

@@ -19,6 +19,8 @@ namespace AtmelISPFrontEnd
 
         private void FormProgramLoader_Load(object sender, EventArgs e)
         {
+            this.richTextBoxTerm.AppendText("#Application started\n");
+
             this.toolStripStatusLabelVersionDetails.Text = AppDefines.VERSION_NUMBER;
 
             this.labelRefreshCOMports_Click(sender, e);
@@ -60,6 +62,15 @@ namespace AtmelISPFrontEnd
                 return;
             }
 
+            if (this.backgroundWorkerISP.IsBusy)
+            {
+                this.richTextBoxTerm.AppendText("#Error: Process already running, killing current task now\n");
+
+                this.backgroundWorkerISP.CancelAsync();
+
+                return;
+            }
+
             this.backgroundWorkerISP.RunWorkerAsync();
 
         }
@@ -76,6 +87,8 @@ namespace AtmelISPFrontEnd
             IntelHexFileParser fParser = new IntelHexFileParser(this.textBoxFileLocation.Text);
 
             this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Hex File Data\n"+fParser.showFileFormatted()+"\n");
+
+            this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Hex File Data Section Size:" + fParser.getDataSectionSize() + "\n");
 
             //Open the selected COM port
             try
@@ -101,7 +114,7 @@ namespace AtmelISPFrontEnd
                 this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Port " + this.serialPortISP.PortName + " Open\n");
 
                 //Wait for Programmer to ID it self
-                this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Waiting For Device ID from ISP\n");
+                this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Waiting for ISP request\n");
 
                 //clear junk
                 this.serialPortISP.DiscardInBuffer();
@@ -113,7 +126,10 @@ namespace AtmelISPFrontEnd
                     {
                         int nByte = serialPortISP.ReadByte();
 
-                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Got Byte:"+ nByte.ToString("X2")+ "\n");
+                        if (this.checkBoxShowComms.Checked == true)
+                        {
+                            this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#RX Byte:" + nByte.ToString("X2") + "\n");
+                        }
 
                         ispControl.addByteFromISP(nByte);
 
@@ -150,7 +166,7 @@ namespace AtmelISPFrontEnd
                                     break;
                                 case (int)CustomAtmelISPControl.ISP_MESG.RESET:
                                     this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Reset\n");
-                                    this.backgroundWorkerISP.CancelAsync();
+                                    //this.backgroundWorkerISP.CancelAsync();
                                     break;
                                 case (int)CustomAtmelISPControl.ISP_MESG.SENDFILE:
 
@@ -161,6 +177,11 @@ namespace AtmelISPFrontEnd
                                     this.serialPortISP.Write(fileDataSection, 0, fileDataSection.Length);
 
                                     this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Sending File data to ISP (Bytes:"+ fileDataSection.Length+ ")\n");
+
+                                    if (this.checkBoxShowComms.Checked == true)
+                                    {
+                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Data Section:\n" + AppFormatting.byteArrayToAssicHexString(fileDataSection)+"\n");
+                                    }
 
                                     break;
                                 case (int)CustomAtmelISPControl.ISP_MESG.NO_MESG:
@@ -173,6 +194,7 @@ namespace AtmelISPFrontEnd
                     }
                     else
                     {
+                        //let CPU do something else
                         System.Threading.Thread.Sleep(10);
                     }
                     
@@ -198,7 +220,14 @@ namespace AtmelISPFrontEnd
         private void backgroundWorkerISP_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.serialPortISP.Close();
-            this.richTextBoxTerm.AppendText("#Task Complete\n");
+            try
+            {
+                this.richTextBoxTerm.AppendText("#Task Complete\n");
+            }
+            catch
+            {
+                //on exit this can be destroyed befor updaing the term
+            }
         }
 
         private void serialPortISP_ErrorReceived(object sender, System.IO.Ports.SerialErrorReceivedEventArgs e)
@@ -222,6 +251,18 @@ namespace AtmelISPFrontEnd
             {
                 this.comboBoxComPorts.Items.Add(portsFound[i]);
             }
+        }
+
+        private void FormProgramLoader_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.backgroundWorkerISP.CancelAsync();
+        }
+
+        private void labelCopyToClipboard_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(this.richTextBoxTerm.Text);
+
+            this.richTextBoxTerm.AppendText("#Terminal output copied to clipboard\n");
         }
     }
 }

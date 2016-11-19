@@ -111,5 +111,10 @@ namespace AtmelISPFrontEnd
 
             return fileDataSection;
         }
+
+        public int getDataSectionSize()
+        {
+            return this.fileDataSectionSize;
+        }
     }
 }
