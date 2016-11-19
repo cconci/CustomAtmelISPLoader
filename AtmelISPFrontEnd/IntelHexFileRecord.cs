@@ -174,5 +174,15 @@ namespace AtmelISPFrontEnd
 
             return recordFormatted;
         }
+
+        public int getDataSectionSize()
+        {
+            return this.data.Count;
+        }
+
+        public List<int> getDataSection()
+        {
+            return this.data;
+        }
     }
 }

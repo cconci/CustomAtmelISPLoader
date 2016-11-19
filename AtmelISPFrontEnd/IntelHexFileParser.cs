@@ -16,10 +16,14 @@ namespace AtmelISPFrontEnd
 
         private bool fileHasError;
 
+        private int fileDataSectionSize;
+
         public IntelHexFileParser(String fileLocation)
         {
             this.fileLocation = fileLocation;
             this.fileHasError = false;
+
+            this.fileDataSectionSize = 0;
 
             this.fileDetails = new List<IntelHexFileRecord>();
 
@@ -56,6 +60,9 @@ namespace AtmelISPFrontEnd
                     IntelHexFileRecord record = new IntelHexFileRecord(lineFromFile);
                     fileDetails.Add(record);
 
+                    //saves time to get this now, we use it for the byte array size
+                    this.fileDataSectionSize += record.getDataSectionSize();
+
                     if (record.doesRecordHaveErrors() == true)
                     {
                         this.fileHasError = true;
@@ -76,6 +83,33 @@ namespace AtmelISPFrontEnd
             }
 
             return fileFormatted;
+        }
+
+        public byte[] getDataSectionAsByteArray()
+        {
+            int dataSectionPntr = 0;
+            byte[] fileDataSection = new byte[this.fileDataSectionSize];
+
+            //we need to copy each records data section into a single array to send down the serial port
+
+            for (int i = 0; i < this.fileDetails.Count; i++)
+            {
+                List<int> recordDataSection = this.fileDetails[i].getDataSection();
+
+                for (int j = 0; j < recordDataSection.Count; j++)
+                {
+                    fileDataSection[dataSectionPntr++] = (Byte)recordDataSection[j];
+                }
+
+                if (dataSectionPntr > this.fileDataSectionSize)
+                {
+                    //should never happen
+                    return null;
+                }
+            }
+
+
+            return fileDataSection;
         }
     }
 }
