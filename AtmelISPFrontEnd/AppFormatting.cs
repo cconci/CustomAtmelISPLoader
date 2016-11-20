@@ -8,7 +8,7 @@ namespace AtmelISPFrontEnd
 {
     class AppFormatting
     {
-        public static string byteArrayToAssicHexString(byte[] byteArray)
+        public static string byteArrayToAsciiHexString(byte[] byteArray)
         {
             string output = "";
 

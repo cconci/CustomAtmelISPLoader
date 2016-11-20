@@ -12,6 +12,22 @@ namespace AtmelISPFrontEnd
         DateTime lastByteTimeStamp;
         string lastMessage;
 
+        public enum ISP_DEVICE : int
+        {
+            AT89S51,
+            AT89S52,
+            AT89S53,
+        };
+
+        int deviceType; //AT89S51,AT89S52,AT89S53
+
+        public enum ISP_DEVICE_MAX_SIZE : int
+        {
+            AT89S51 = 4096,
+            AT89S52 = 8192,
+            AT89S53 = 12288,
+        };
+
         public enum ISP_MESG : int
         {
             NO_MESG = 0,
@@ -83,14 +99,20 @@ namespace AtmelISPFrontEnd
                 else if (lastMessage.Contains("AT89S51"))
                 {
                     mesgID = (int)ISP_MESG.AT89S51;
+
+                    this.deviceType = (int)ISP_DEVICE.AT89S51;
                 }
                 else if (lastMessage.Contains("AT89S52"))
                 {
                     mesgID = (int)ISP_MESG.AT89S52;
+
+                    this.deviceType = (int)ISP_DEVICE.AT89S52;
                 }
                 else if (lastMessage.Contains("AT89S53"))
                 {
                     mesgID = (int)ISP_MESG.AT89S53;
+
+                    this.deviceType = (int)ISP_DEVICE.AT89S53;
                 }
                 else if (lastMessage.Contains("FILENAME"))
                 {
@@ -114,6 +136,57 @@ namespace AtmelISPFrontEnd
         public string getLastMessage()
         {
             return this.lastMessage;
+        }
+
+        public bool isFileSizeCompatibleWithDevice(int ispMessageIdex, int dataSectionSize)
+        {
+            /*
+            4096 bytes 89S51  
+            8192 Bytes 89S52
+            12288 bytes 89S53
+            */
+
+            bool retVal = true;
+
+            switch (ispMessageIdex)
+            {
+                case (int)ISP_MESG.AT89S51:
+
+                    if (dataSectionSize > (int)ISP_DEVICE_MAX_SIZE.AT89S51)
+                    {
+                        //error
+                        retVal = false;
+                    }
+
+                    break;
+                case (int)ISP_MESG.AT89S52:
+
+                    if (dataSectionSize > (int)ISP_DEVICE_MAX_SIZE.AT89S52)
+                    {
+                        //error
+                        retVal = false;
+                    }
+
+                    break;
+                case (int)ISP_MESG.AT89S53:
+
+                    if (dataSectionSize > (int)ISP_DEVICE_MAX_SIZE.AT89S53)
+                    {
+                        //error
+                        retVal = false;
+                    }
+
+                    break;
+
+            }
+
+
+            return retVal;
+        }
+
+        public int getISPDevice()
+        {
+            return this.deviceType;
         }
     }
 }

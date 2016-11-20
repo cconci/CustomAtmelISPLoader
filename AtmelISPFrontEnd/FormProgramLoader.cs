@@ -88,6 +88,8 @@ namespace AtmelISPFrontEnd
 
             this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Hex File Data\n"+fParser.showFileFormatted()+"\n");
 
+            this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Hex File Lines:" + fParser.getRawFileNumLines() + "\n");
+            this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Hex File Size(RAW):" + fParser.getRawFileSize() + "\n");
             this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Hex File Data Section Size:" + fParser.getDataSectionSize() + "\n");
 
             //Open the selected COM port
@@ -119,6 +121,8 @@ namespace AtmelISPFrontEnd
                 //clear junk
                 this.serialPortISP.DiscardInBuffer();
 
+                
+
                 while (!this.backgroundWorkerISP.CancellationPending)
                 {
                     //read in Data
@@ -143,18 +147,27 @@ namespace AtmelISPFrontEnd
                             //show the last message from the ISP, minus the null
                             this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#'"+ lastMesageFromISP.Remove(lastMesageFromISP.Length-1,1) + "' Recived from ISP\n");
 
+                            System.Threading.Thread.Sleep(100); //100ms break before any replys
+
                             switch (ispMessageStatus)
                             {
                                 case (int)CustomAtmelISPControl.ISP_MESG.AT89S51:
                                 case (int)CustomAtmelISPControl.ISP_MESG.AT89S52:
                                 case (int)CustomAtmelISPControl.ISP_MESG.AT89S53:
 
+                                    if(ispControl.isFileSizeCompatibleWithDevice(ispMessageStatus, fParser.getDataSectionSize()) == false)
+                                    {
+                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Error: device is to small for data (need:"+ fParser.getDataSectionSize() + ")\n");
+
+                                        this.serialPortISP.Write("ERROR\0");
+
+                                        break;
+                                    }
+
                                     //device details sent
                                     this.serialPortISP.Write("READY\0");
-                                    //send file name   
-                                    this.serialPortISP.Write(fileName);
 
-                                    this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Ready & Filename sent to ISP\n");
+                                    this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Ready sent to ISP\n");
 
                                     break;
                                 case (int)CustomAtmelISPControl.ISP_MESG.FILENAME:
@@ -173,14 +186,14 @@ namespace AtmelISPFrontEnd
                                     System.Threading.Thread.Sleep(1000);//Wait 1 second
 
                                     //send file data
-                                    Byte[] fileDataSection = fParser.getDataSectionAsByteArray();
+                                    Byte[] fileDataSection = fParser.getDataSectionAsByteArray(ispControl.getISPDevice());
                                     this.serialPortISP.Write(fileDataSection, 0, fileDataSection.Length);
 
                                     this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Sending File data to ISP (Bytes:"+ fileDataSection.Length+ ")\n");
 
                                     if (this.checkBoxShowComms.Checked == true)
                                     {
-                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Data Section:\n" + AppFormatting.byteArrayToAssicHexString(fileDataSection)+"\n");
+                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Data Section:\n" + AppFormatting.byteArrayToAsciiHexString(fileDataSection)+"\n");
                                     }
 
                                     break;
