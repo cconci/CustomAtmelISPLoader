@@ -193,7 +193,7 @@ namespace AtmelISPFrontEnd
 
                                     if (this.checkBoxShowComms.Checked == true)
                                     {
-                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Data Section:\n" + AppFormatting.byteArrayToAsciiHexString(fileDataSection)+"\n");
+                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Data Section:\n" + AppFormatting.byteArrayToAsciiHexString(fileDataSection,16)+"\n");
                                     }
 
                                     break;

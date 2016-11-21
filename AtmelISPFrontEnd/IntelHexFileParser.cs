@@ -123,6 +123,14 @@ namespace AtmelISPFrontEnd
 
             for (int i = 0; i < this.fileDetails.Count; i++)
             {
+                int address = this.fileDetails[i].getAddress();
+
+                //padding by address
+                while (dataSectionPntr < address)
+                {
+                    fileDataSection[dataSectionPntr++] = 0xFF;
+                }
+
                 List<int> recordDataSection = this.fileDetails[i].getDataSection();
 
                 for (int j = 0; j < recordDataSection.Count; j++)

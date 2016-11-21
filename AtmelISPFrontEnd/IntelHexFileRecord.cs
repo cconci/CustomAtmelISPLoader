@@ -184,5 +184,10 @@ namespace AtmelISPFrontEnd
         {
             return this.data;
         }
+
+        public int getAddress()
+        {
+            return this.address;
+        }
     }
 }
