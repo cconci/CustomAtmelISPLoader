@@ -179,7 +179,7 @@ namespace AtmelISPFrontEnd
                                     break;
                                 case (int)CustomAtmelISPControl.ISP_MESG.RESET:
                                     this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Reset\n");
-                                    //this.backgroundWorkerISP.CancelAsync();
+                                    this.backgroundWorkerISP.CancelAsync();
                                     break;
                                 case (int)CustomAtmelISPControl.ISP_MESG.SENDFILE:
 
@@ -235,7 +235,8 @@ namespace AtmelISPFrontEnd
             this.serialPortISP.Close();
             try
             {
-                this.richTextBoxTerm.AppendText("#Task Complete\n");
+                this.richTextBoxTerm.AppendText("#COM Port ["+ this.serialPortISP.PortName+ "] Closed\n");
+                this.richTextBoxTerm.AppendText("#Task Complete - Press 'Send to Programmer' Button to start server\n");
             }
             catch
             {
