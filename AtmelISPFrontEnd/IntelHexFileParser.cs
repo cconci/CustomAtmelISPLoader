@@ -93,31 +93,21 @@ namespace AtmelISPFrontEnd
             return fileFormatted;
         }
 
-        public byte[] getDataSectionAsByteArray(int deviceType)
+        public byte[] getDataSectionAsByteArray(int dataSize)
         {
             int dataSectionPntr = 0;
 
-            int padding = 0;
-
-            switch (deviceType)
-            {
-                case (int)CustomAtmelISPControl.ISP_DEVICE.AT89S51:
-                    padding = (int)CustomAtmelISPControl.ISP_DEVICE_MAX_SIZE.AT89S51 - this.fileDataSectionSize;
-                    break;
-                case (int)CustomAtmelISPControl.ISP_DEVICE.AT89S52:
-                    padding = (int)CustomAtmelISPControl.ISP_DEVICE_MAX_SIZE.AT89S52 - this.fileDataSectionSize;
-                    break;
-                case (int)CustomAtmelISPControl.ISP_DEVICE.AT89S53:
-                    padding = (int)CustomAtmelISPControl.ISP_DEVICE_MAX_SIZE.AT89S53 - this.fileDataSectionSize;
-                    break;
-            }
-
-            if (padding < 0)
+            if (this.fileDataSectionSize > dataSize)
             {
                 return null;
             }
 
-            byte[] fileDataSection = new byte[this.fileDataSectionSize + padding];
+            if (dataSize < 0)
+            {
+                return null;
+            }
+
+            byte[] fileDataSection = new byte[dataSize];
 
             //we need to copy each records data section into a single array to send down the serial port
 
@@ -142,7 +132,7 @@ namespace AtmelISPFrontEnd
             }
 
             //finsih up with the padding
-            while (dataSectionPntr < (this.fileDataSectionSize + padding))
+            while (dataSectionPntr < (dataSize))
             {
                 fileDataSection[dataSectionPntr++] = 0xFF;
             }

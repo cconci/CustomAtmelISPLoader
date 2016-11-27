@@ -12,14 +12,55 @@ namespace AtmelISPFrontEnd
 {
     public partial class FormProgramLoader : Form
     {
+        DeviceInfoFileParser devInfoFileParser;
+
         public FormProgramLoader()
         {
             InitializeComponent();
         }
 
+        private void loadDeviceFile()
+        {
+            //Load the Device List from file
+            if (DeviceInfoFileParser.fileExists() == true)
+            {
+                this.richTextBoxTerm.AppendText("#Device info file found\n");
+            }
+            else
+            {
+                this.richTextBoxTerm.AppendText("#Device info file NOT found, creating default file\n");
+                DeviceInfoFileParser.makeDefaultFile("");//file in root directory of app
+                this.richTextBoxTerm.AppendText("#Device info file created\n");
+            }
+
+            //open file and add contends to the list
+            devInfoFileParser = new DeviceInfoFileParser();
+            devInfoFileParser.parseDeviceFile("");//file in root directory of app
+
+            if (devInfoFileParser.doesFileHaveErrors() == false)
+            {
+                //add entrys to the drop down
+                List<DeviceInfo> devList = devInfoFileParser.getDeviceList();
+
+                this.comboBoxDeviceList.Items.Clear();
+                for (int i = 0; i < devList.Count; i++)
+                {
+                    String itemStr = devList[i].getDeviceName() + " [" + devList[i].getDeviceSize() + "]";
+
+                    this.comboBoxDeviceList.Items.Add(itemStr);
+                }
+            }
+            else
+            {
+                this.richTextBoxTerm.AppendText("#Device file has errors, deleted it from the application root directory and restart the application\n");
+            }
+        }
+
         private void FormProgramLoader_Load(object sender, EventArgs e)
         {
             this.richTextBoxTerm.AppendText("#Application started\n");
+
+            this.loadDeviceFile();
 
             this.toolStripStatusLabelVersionDetails.Text = AppDefines.VERSION_NUMBER;
 
@@ -84,6 +125,8 @@ namespace AtmelISPFrontEnd
         {
             //parse the ffile
             string fileName = System.IO.Path.GetFileName(this.textBoxFileLocation.Text);
+            bool deviceSetByISP = false;
+
             IntelHexFileParser fParser = new IntelHexFileParser(this.textBoxFileLocation.Text);
 
             this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Hex File Data\n"+fParser.showFileFormatted()+"\n");
@@ -164,6 +207,9 @@ namespace AtmelISPFrontEnd
                                         break;
                                     }
 
+                                    //device has been swt by the ISP
+                                    deviceSetByISP = true;
+
                                     //device details sent
                                     this.serialPortISP.Write("READY\0");
 
@@ -186,7 +232,35 @@ namespace AtmelISPFrontEnd
                                     System.Threading.Thread.Sleep(1000);//Wait 1 second
 
                                     //send file data
-                                    Byte[] fileDataSection = fParser.getDataSectionAsByteArray(ispControl.getISPDevice());
+
+                                    int deviceSize = 0;
+
+                                    if (deviceSetByISP == true)
+                                    {
+                                        deviceSize = ispControl.getISPDeviceSize();
+
+                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Using Device sent from ISP ["+ deviceSize + "]\n");
+
+                                    }
+                                    else
+                                    {
+                                        int deviceIndex = 0;
+                                        this.comboBoxDeviceList.Invoke(new MethodInvoker(delegate { deviceIndex = this.comboBoxDeviceList.SelectedIndex; }));
+
+                                        deviceSize = this.devInfoFileParser.getSizeOfDevice(deviceIndex);
+
+                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Using Device selected by User [" + deviceSize + "]\n");
+                                    }
+
+                                    Byte[] fileDataSection = fParser.getDataSectionAsByteArray(deviceSize);
+
+                                    if (fileDataSection == null)
+                                    {
+                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Error: hex file size error ["+ ispControl.getISPDeviceSize() + "] \n");
+                                        this.serialPortISP.Write("ERROR\0");
+                                        break;
+                                    }
+
                                     this.serialPortISP.Write(fileDataSection, 0, fileDataSection.Length);
 
                                     this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Sending File data to ISP (Bytes:"+ fileDataSection.Length+ ")\n");
@@ -277,6 +351,16 @@ namespace AtmelISPFrontEnd
             Clipboard.SetText(this.richTextBoxTerm.Text);
 
             this.richTextBoxTerm.AppendText("#Terminal output copied to clipboard\n");
+        }
+
+        private void buttonAddNewDevice_Click(object sender, EventArgs e)
+        {
+            //Show The Add Device form
+            FormDeviceInfoEdit nForm = new FormDeviceInfoEdit();
+
+            nForm.ShowDialog();
+
+            this.loadDeviceFile();
         }
     }
 }

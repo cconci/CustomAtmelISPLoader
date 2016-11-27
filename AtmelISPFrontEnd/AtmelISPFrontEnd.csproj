@@ -49,6 +49,14 @@
     <Compile Include="AppDefines.cs" />
     <Compile Include="AppFormatting.cs" />
     <Compile Include="CustomAtmelISPControl.cs" />
+    <Compile Include="DeviceInfo.cs" />
+    <Compile Include="DeviceInfoFileParser.cs" />
+    <Compile Include="FormDeviceInfoEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormDeviceInfoEdit.Designer.cs">
+      <DependentUpon>FormDeviceInfoEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormProgramLoader.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -59,6 +67,9 @@
     <Compile Include="IntelHexFileRecord.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FormDeviceInfoEdit.resx">
+      <DependentUpon>FormDeviceInfoEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormProgramLoader.resx">
       <DependentUpon>FormProgramLoader.cs</DependentUpon>
     </EmbeddedResource>

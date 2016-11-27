@@ -188,5 +188,25 @@ namespace AtmelISPFrontEnd
         {
             return this.deviceType;
         }
+
+        public int getISPDeviceSize()
+        {
+            int size = 0;
+
+            switch (this.deviceType)
+            {
+                case (int)CustomAtmelISPControl.ISP_DEVICE.AT89S51:
+                    size = (int)CustomAtmelISPControl.ISP_DEVICE_MAX_SIZE.AT89S51;
+                    break;
+                case (int)CustomAtmelISPControl.ISP_DEVICE.AT89S52:
+                    size = (int)CustomAtmelISPControl.ISP_DEVICE_MAX_SIZE.AT89S52;
+                    break;
+                case (int)CustomAtmelISPControl.ISP_DEVICE.AT89S53:
+                    size = (int)CustomAtmelISPControl.ISP_DEVICE_MAX_SIZE.AT89S53;
+                    break;
+            }
+
+            return size;
+        }
     }
 }

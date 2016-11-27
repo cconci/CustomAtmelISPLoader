@@ -48,13 +48,16 @@
             this.labelRefreshCOMports = new System.Windows.Forms.Label();
             this.checkBoxShowComms = new System.Windows.Forms.CheckBox();
             this.labelCopyToClipboard = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.comboBoxDeviceList = new System.Windows.Forms.ComboBox();
+            this.buttonAddNewDevice = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonLoadFile
             // 
             this.buttonLoadFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonLoadFile.Location = new System.Drawing.Point(457, 94);
+            this.buttonLoadFile.Location = new System.Drawing.Point(456, 94);
             this.buttonLoadFile.Name = "buttonLoadFile";
             this.buttonLoadFile.Size = new System.Drawing.Size(100, 23);
             this.buttonLoadFile.TabIndex = 0;
@@ -238,11 +241,45 @@
             this.labelCopyToClipboard.Text = "Copy to Clipboard";
             this.labelCopyToClipboard.Click += new System.EventHandler(this.labelCopyToClipboard_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(193, 126);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(68, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Device Type";
+            // 
+            // comboBoxDeviceList
+            // 
+            this.comboBoxDeviceList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxDeviceList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxDeviceList.FormattingEnabled = true;
+            this.comboBoxDeviceList.Location = new System.Drawing.Point(196, 143);
+            this.comboBoxDeviceList.Name = "comboBoxDeviceList";
+            this.comboBoxDeviceList.Size = new System.Drawing.Size(241, 21);
+            this.comboBoxDeviceList.TabIndex = 16;
+            // 
+            // buttonAddNewDevice
+            // 
+            this.buttonAddNewDevice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAddNewDevice.Location = new System.Drawing.Point(456, 143);
+            this.buttonAddNewDevice.Name = "buttonAddNewDevice";
+            this.buttonAddNewDevice.Size = new System.Drawing.Size(100, 23);
+            this.buttonAddNewDevice.TabIndex = 17;
+            this.buttonAddNewDevice.Text = "Add New Device";
+            this.buttonAddNewDevice.UseVisualStyleBackColor = true;
+            this.buttonAddNewDevice.Click += new System.EventHandler(this.buttonAddNewDevice_Click);
+            // 
             // FormProgramLoader
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 461);
+            this.Controls.Add(this.buttonAddNewDevice);
+            this.Controls.Add(this.comboBoxDeviceList);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.labelCopyToClipboard);
             this.Controls.Add(this.checkBoxShowComms);
             this.Controls.Add(this.labelRefreshCOMports);
@@ -290,6 +327,9 @@
         private System.Windows.Forms.Label labelRefreshCOMports;
         private System.Windows.Forms.CheckBox checkBoxShowComms;
         private System.Windows.Forms.Label labelCopyToClipboard;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox comboBoxDeviceList;
+        private System.Windows.Forms.Button buttonAddNewDevice;
     }
 }
 
