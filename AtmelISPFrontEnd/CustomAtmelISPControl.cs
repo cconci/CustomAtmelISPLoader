@@ -39,7 +39,7 @@ namespace AtmelISPFrontEnd
             FILENAME,
         };
 
-        bool validMessageRecived;
+        bool validMessageReceived;
 
         public CustomAtmelISPControl()
         {
@@ -65,7 +65,7 @@ namespace AtmelISPFrontEnd
 
             if (nByte == 0x00) //the null indicates an end of mesg
             {
-                this.validMessageRecived = true;
+                this.validMessageReceived = true;
             }
 
             this.lastByteTimeStamp = DateTime.Now;
@@ -79,7 +79,7 @@ namespace AtmelISPFrontEnd
 
             int mesgID = (int)ISP_MESG.NO_MESG;
 
-            if (this.validMessageRecived == true)
+            if (this.validMessageReceived == true)
             {
                 //Dump the list in to a string then we can check for our messages
                 lastMessage = "";
@@ -125,7 +125,7 @@ namespace AtmelISPFrontEnd
 
                 //we are done
                 this.incomingPacket.Clear();
-                this.validMessageRecived = false;
+                this.validMessageReceived = false;
 
                 
             }

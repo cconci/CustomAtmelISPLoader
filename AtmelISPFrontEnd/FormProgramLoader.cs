@@ -188,7 +188,7 @@ namespace AtmelISPFrontEnd
                             String lastMesageFromISP = ispControl.getLastMessage();
 
                             //show the last message from the ISP, minus the null
-                            this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#'"+ lastMesageFromISP.Remove(lastMesageFromISP.Length-1,1) + "' Recived from ISP\n");
+                            this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#'"+ lastMesageFromISP.Remove(lastMesageFromISP.Length-1,1) + "' Received from ISP\n");
 
                             System.Threading.Thread.Sleep(100); //100ms break before any replys
 

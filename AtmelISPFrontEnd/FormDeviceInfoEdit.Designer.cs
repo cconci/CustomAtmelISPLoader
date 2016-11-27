@@ -172,7 +172,7 @@
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(400, 438);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(400, 400);
+            this.MinimumSize = new System.Drawing.Size(400, 438);
             this.Name = "FormDeviceInfoEdit";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Device Info";
