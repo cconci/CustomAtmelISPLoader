@@ -112,6 +112,9 @@ namespace AtmelISPFrontEnd
                 return;
             }
 
+            this.comboBoxComPorts.Enabled = false;
+            this.comboBoxDeviceList.Enabled = false;
+
             this.backgroundWorkerISP.RunWorkerAsync();
 
         }
@@ -164,7 +167,12 @@ namespace AtmelISPFrontEnd
                 //clear junk
                 this.serialPortISP.DiscardInBuffer();
 
-                
+                //set a custom device from the drop down
+                int deviceIndex = 0;
+                this.comboBoxDeviceList.Invoke(new MethodInvoker(delegate { deviceIndex = this.comboBoxDeviceList.SelectedIndex; }));
+
+                //SO we can ID new devices
+                ispControl.setCustomDevice(this.devInfoFileParser.getNameOfDevice(deviceIndex));
 
                 while (!this.backgroundWorkerISP.CancellationPending)
                 {
@@ -194,6 +202,26 @@ namespace AtmelISPFrontEnd
 
                             switch (ispMessageStatus)
                             {
+                                case (int)CustomAtmelISPControl.ISP_MESG.CUSTOM_DEVICE:
+                                    {
+                                        int deviceMaxSize = this.devInfoFileParser.getSizeOfDevice(deviceIndex);
+
+                                        if (fParser.getDataSectionSize() > deviceMaxSize)
+                                        {
+                                            this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Error: device is to small for data (need:" + fParser.getDataSectionSize() + ")\n");
+
+                                            this.serialPortISP.Write("ERROR\0");
+
+                                            break;
+                                        }
+
+                                        //device details sent
+                                        this.serialPortISP.Write("READY\0");
+
+                                        this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Ready sent to ISP\n");
+                                    }
+                                    break;
+
                                 case (int)CustomAtmelISPControl.ISP_MESG.AT89S51:
                                 case (int)CustomAtmelISPControl.ISP_MESG.AT89S52:
                                 case (int)CustomAtmelISPControl.ISP_MESG.AT89S53:
@@ -244,8 +272,6 @@ namespace AtmelISPFrontEnd
                                     }
                                     else
                                     {
-                                        int deviceIndex = 0;
-                                        this.comboBoxDeviceList.Invoke(new MethodInvoker(delegate { deviceIndex = this.comboBoxDeviceList.SelectedIndex; }));
 
                                         deviceSize = this.devInfoFileParser.getSizeOfDevice(deviceIndex);
 
@@ -309,6 +335,9 @@ namespace AtmelISPFrontEnd
             this.serialPortISP.Close();
             try
             {
+                this.comboBoxComPorts.Enabled = true;
+                this.comboBoxDeviceList.Enabled = true;
+
                 this.richTextBoxTerm.AppendText("#COM Port ["+ this.serialPortISP.PortName+ "] Closed\n");
                 this.richTextBoxTerm.AppendText("#Task Complete - Press 'Send to Programmer' Button to start server\n");
             }

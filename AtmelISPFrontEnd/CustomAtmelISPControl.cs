@@ -11,6 +11,7 @@ namespace AtmelISPFrontEnd
         List<int> incomingPacket;
         DateTime lastByteTimeStamp;
         string lastMessage;
+        string customDeviceString;
 
         public enum ISP_DEVICE : int
         {
@@ -37,6 +38,7 @@ namespace AtmelISPFrontEnd
             AT89S52,
             AT89S53,
             FILENAME,
+            CUSTOM_DEVICE,
         };
 
         bool validMessageReceived;
@@ -46,6 +48,8 @@ namespace AtmelISPFrontEnd
             this.incomingPacket = new List<int>();
 
             this.lastByteTimeStamp = DateTime.Now;
+
+            this.customDeviceString = "";
         }
 
         public void addByteFromISP(int nByte)
@@ -117,6 +121,10 @@ namespace AtmelISPFrontEnd
                 else if (lastMessage.Contains("FILENAME"))
                 {
                     mesgID = (int)ISP_MESG.FILENAME;
+                }
+                else if (lastMessage.Contains(this.customDeviceString))
+                {
+                    mesgID = (int)ISP_MESG.CUSTOM_DEVICE;
                 }
                 else
                 {
@@ -207,6 +215,11 @@ namespace AtmelISPFrontEnd
             }
 
             return size;
+        }
+
+        public void setCustomDevice(String deviceName)
+        {
+            this.customDeviceString = deviceName;
         }
     }
 }

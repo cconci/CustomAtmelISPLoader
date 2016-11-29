@@ -91,6 +91,22 @@ namespace AtmelISPFrontEnd
             return deviceSize;
         }
 
+        public String getNameOfDevice(int index)
+        {
+            String deviceName = "------";
+
+            if (index > this.fileDetails.Count || index < 0)
+            {
+
+            }
+            else
+            {
+                deviceName = this.fileDetails[index].getDeviceName();
+            }
+
+            return deviceName;
+        }
+
         public static int makeDefaultFile(String fileOutputlocation)
         {
             int retCode = 0; ;
