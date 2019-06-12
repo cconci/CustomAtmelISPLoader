@@ -56,6 +56,29 @@ namespace AtmelISPFrontEnd
             }
         }
 
+        private void setComboBoxBaudRates()
+        {
+            this.comboBoxBaudRate.Items.Clear();
+
+            this.comboBoxBaudRate.Items.Add("110");
+            this.comboBoxBaudRate.Items.Add("300");
+            this.comboBoxBaudRate.Items.Add("600");
+            this.comboBoxBaudRate.Items.Add("1200");
+            this.comboBoxBaudRate.Items.Add("2400");
+            this.comboBoxBaudRate.Items.Add("4800");
+            this.comboBoxBaudRate.Items.Add("9600");
+            this.comboBoxBaudRate.Items.Add("14400");
+            this.comboBoxBaudRate.Items.Add("19200");
+            this.comboBoxBaudRate.Items.Add("38400");
+            this.comboBoxBaudRate.Items.Add("57600");
+            this.comboBoxBaudRate.Items.Add("115200");
+            this.comboBoxBaudRate.Items.Add("128000");
+            this.comboBoxBaudRate.Items.Add("256000");
+
+            this.comboBoxBaudRate.Text = "9600"; //default
+
+        }
+
         private void FormProgramLoader_Load(object sender, EventArgs e)
         {
             this.richTextBoxTerm.AppendText("#Application started\n");
@@ -65,6 +88,9 @@ namespace AtmelISPFrontEnd
             this.toolStripStatusLabelVersionDetails.Text = AppDefines.VERSION_NUMBER;
 
             this.labelRefreshCOMports_Click(sender, e);
+
+            this.setComboBoxBaudRates();
+
         }
 
         private void labelClearTerm_Click(object sender, EventArgs e)
@@ -113,6 +139,7 @@ namespace AtmelISPFrontEnd
             }
 
             this.comboBoxComPorts.Enabled = false;
+            this.comboBoxBaudRate.Enabled = false;
             this.comboBoxDeviceList.Enabled = false;
 
             this.backgroundWorkerISP.RunWorkerAsync();
@@ -144,10 +171,32 @@ namespace AtmelISPFrontEnd
 
                 CustomAtmelISPControl ispControl = new CustomAtmelISPControl();
 
+                String userSetBuadRate = "";
                 this.serialPortISP.BaudRate = 9600;
-                //get the user selected Com port
+                //get the user entered Baud Rate
 
                 object dCheck = null;
+                this.comboBoxBaudRate.Invoke(new MethodInvoker(delegate { dCheck = this.comboBoxBaudRate.SelectedItem; }));
+
+                if (dCheck != null)
+                {
+                    this.comboBoxBaudRate.Invoke(new MethodInvoker(delegate { userSetBuadRate = this.comboBoxBaudRate.SelectedItem.ToString(); }));
+                }
+
+                try
+                {
+                    this.serialPortISP.BaudRate = System.Convert.ToInt32(userSetBuadRate);
+                    this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Baud Rate Set: '" + userSetBuadRate + "'\n");
+                }
+                catch
+                {
+                    this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Baud Rate Error '"+ userSetBuadRate + "' Setting 9600\n");
+                    this.serialPortISP.BaudRate = 9600;
+                }
+
+                //get the user selected Com port
+
+                dCheck = null;
                 this.comboBoxComPorts.Invoke(new MethodInvoker(delegate { dCheck = this.comboBoxComPorts.SelectedItem; }));
 
                 if(dCheck != null)
@@ -336,6 +385,7 @@ namespace AtmelISPFrontEnd
             try
             {
                 this.comboBoxComPorts.Enabled = true;
+                this.comboBoxBaudRate.Enabled = true;
                 this.comboBoxDeviceList.Enabled = true;
 
                 this.richTextBoxTerm.AppendText("#COM Port ["+ this.serialPortISP.PortName+ "] Closed\n");

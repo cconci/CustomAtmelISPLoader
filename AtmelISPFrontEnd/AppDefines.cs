@@ -12,7 +12,7 @@ namespace AtmelISPFrontEnd
 {
     class AppDefines
     {
-        public static String VERSION_NUMBER = "01.04.00";
+        public static String VERSION_NUMBER = "01.05.00";
 
         //BGW for ISP (ref FromProgramLoader)
         public enum BGW_ISP_STATES : int
