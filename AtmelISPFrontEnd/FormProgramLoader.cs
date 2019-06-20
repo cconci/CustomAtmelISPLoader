@@ -72,8 +72,11 @@ namespace AtmelISPFrontEnd
             this.comboBoxBaudRate.Items.Add("38400");
             this.comboBoxBaudRate.Items.Add("57600");
             this.comboBoxBaudRate.Items.Add("115200");
-            this.comboBoxBaudRate.Items.Add("128000");
-            this.comboBoxBaudRate.Items.Add("256000");
+            this.comboBoxBaudRate.Items.Add("230400");
+            this.comboBoxBaudRate.Items.Add("460800");
+            this.comboBoxBaudRate.Items.Add("921600");
+            //this.comboBoxBaudRate.Items.Add("128000");
+            //this.comboBoxBaudRate.Items.Add("256000");
 
             this.comboBoxBaudRate.Text = "9600"; //default
 
@@ -176,11 +179,11 @@ namespace AtmelISPFrontEnd
                 //get the user entered Baud Rate
 
                 object dCheck = null;
-                this.comboBoxBaudRate.Invoke(new MethodInvoker(delegate { dCheck = this.comboBoxBaudRate.SelectedItem; }));
+                this.comboBoxBaudRate.Invoke(new MethodInvoker(delegate { dCheck = this.comboBoxBaudRate.Text.ToString(); }));
 
                 if (dCheck != null)
                 {
-                    this.comboBoxBaudRate.Invoke(new MethodInvoker(delegate { userSetBuadRate = this.comboBoxBaudRate.SelectedItem.ToString(); }));
+                    this.comboBoxBaudRate.Invoke(new MethodInvoker(delegate { userSetBuadRate = this.comboBoxBaudRate.Text.ToString(); }));
                 }
 
                 try
