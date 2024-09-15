@@ -38,6 +38,7 @@ namespace AtmelISPFrontEnd
         public void parseIntelHexFile(String fileLocation)
         {
             String lineFromFile;
+            int currentAddressExtension = 0;
 
             //check file Exists
             if (System.IO.File.Exists(fileLocation) == false)
@@ -61,8 +62,23 @@ namespace AtmelISPFrontEnd
                 else
                 {
                     //parse the record
-                    IntelHexFileRecord record = new IntelHexFileRecord(lineFromFile);
-                    fileDetails.Add(record);
+                    IntelHexFileRecord record = new IntelHexFileRecord(lineFromFile, currentAddressExtension);
+                    
+
+                    //Handel extensions
+
+                    if (record.getRecrodType() == 4) //Extended Linear Address
+                    {
+                        List<int> payload = record.getDataSection();
+                        //address extension
+                        currentAddressExtension = (payload[0]<<8) + payload[1];
+                    }
+
+                    //only add Data sections
+                    if (record.getRecrodType() == 0)
+                    {
+                        fileDetails.Add(record);
+                    }
 
                     //saves time to get this now, we use it for the byte array size
                     this.fileDataSectionSize += record.getDataSectionSize();
@@ -77,7 +93,6 @@ namespace AtmelISPFrontEnd
                     this.rawFileNumberOfLines++;
                 }
             }
-
 
         }
 
@@ -114,6 +129,8 @@ namespace AtmelISPFrontEnd
             for (int i = 0; i < this.fileDetails.Count; i++)
             {
                 int address = this.fileDetails[i].getAddress();
+
+                System.Diagnostics.Debug.Print("" + address.ToString("X2") + "" + "");
 
                 //padding by address
                 while (dataSectionPntr < address)

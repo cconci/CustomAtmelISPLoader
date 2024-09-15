@@ -28,10 +28,14 @@ namespace AtmelISPFrontEnd
         private bool recordHasError;
         private String recordErrorNote;
 
-        public IntelHexFileRecord(String rawRecord)
+        private int addressExtension = 0;
+
+        public IntelHexFileRecord(String rawRecord, int addressExtension)
         {
             this.rawRecord = rawRecord;
             this.data = new List<int>();
+
+            this.addressExtension = addressExtension;
 
             this.parseRecord();
         }
@@ -161,7 +165,7 @@ namespace AtmelISPFrontEnd
             recordFormatted = "";
             recordFormatted += this.startCode + "|";
             recordFormatted += this.byteCount.ToString("X2") + "|";
-            recordFormatted += this.address.ToString("X4") + "|";
+            recordFormatted += this.getAddress().ToString("X4") + "|";
             recordFormatted += this.recordType.ToString("X2") + "|";
 
             for (int i = 0; i < this.data.Count; i++)
@@ -187,7 +191,12 @@ namespace AtmelISPFrontEnd
 
         public int getAddress()
         {
-            return this.address;
+            return (this.addressExtension << 16)+this.address;
+        }
+
+        public int getRecrodType()
+        {
+            return this.recordType;
         }
     }
 }

@@ -168,6 +168,9 @@ namespace AtmelISPFrontEnd
             this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Hex File Size(RAW):" + fParser.getRawFileSize() + "\n");
             this.backgroundWorkerISP.ReportProgress((int)(AppDefines.BGW_ISP_STATES.SHOW_TEXT), "#Hex File Data Section Size:" + fParser.getDataSectionSize() + "\n");
 
+            //testing
+            //Byte[] fileDataSectionA = fParser.getDataSectionAsByteArray(256000);
+
             //Open the selected COM port
             try
             {
